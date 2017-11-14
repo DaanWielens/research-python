@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Oxford IPS 120-10 Controller
-# Version 1.3 (2017-10-06)
+# Version 2.1 (2017-11-14)
 # Daan Wielens (ICE/QTM)
 
 import sys
@@ -57,9 +57,8 @@ def onClosingWindow():
     # Make absolutely sure that the session is closed properly.
     try:
         a = oxM.session
-        oxM.write('R 7')
-        oxM.wait_for_srq()
-        oxM.read()
+        lib = rm.visalab
+        lib.clear(a)
         oxM.close()
         top.destroy()
     except Exception:
@@ -69,9 +68,7 @@ def clkGotoZero():
     if novisa == 0:
         oxM = rm.open_resource("GPIB0::25::INSTR")
         oxM.read_termination = '\r'
-        oxM.write('A 2')
-        oxM.wait_for_srq()
-        oxM.read()
+        oxM.query('A 2')
         oxM.close()
         UpdateValues()
 
@@ -79,9 +76,7 @@ def clkGotoSetp():
     if novisa == 0:
         oxM = rm.open_resource("GPIB0::25::INSTR")
         oxM.read_termination = '\r'
-        oxM.write('A 1')
-        oxM.wait_for_srq()
-        oxM.read()
+        oxM.query('A 1')
         oxM.close()
         UpdateValues()
 
@@ -89,9 +84,7 @@ def clkUnlock():
     if novisa == 0:
         oxM = rm.open_resource("GPIB0::25::INSTR")
         oxM.read_termination = '\r'
-        oxM.write('C 3')
-        oxM.wait_for_srq()
-        oxM.read()
+        oxM.query('C 3')
         oxM.close()
         UpdateValues()
 
@@ -99,9 +92,7 @@ def clkHold():
     if novisa == 0:
         oxM = rm.open_resource("GPIB0::25::INSTR")
         oxM.read_termination = '\r'
-        oxM.write('A 0')
-        oxM.wait_for_srq()
-        oxM.read()
+        oxM.query('A 0')
         oxM.close()
         UpdateValues()
 
@@ -115,9 +106,7 @@ def clkSetSetp():
             oxM.close()
             messagebox.showerror("Error","Setpoint exceeds limit of B = 7 T.")
             return
-        oxM.write('J ' +  valSetp)
-        oxM.wait_for_srq()
-        oxM.read()
+        oxM.query('J ' +  valSetp)
         oxM.close()
         UpdateValues()
 
@@ -126,9 +115,7 @@ def clkSetRate():
         oxM = rm.open_resource("GPIB0::25::INSTR")
         oxM.read_termination = '\r'
         valRate = setR.get().replace(',','.')
-        oxM.write('T ' +  valRate)
-        oxM.wait_for_srq()
-        oxM.read()
+        oxM.query('T ' +  valRate)
         oxM.close()
         UpdateValues()
 
@@ -138,30 +125,20 @@ def Refresher():
 
 def UpdateValues():
     if novisa == 0:
-        oxM = rm.open_resource("GPIB0::25::INSTR")
-        oxM.read_termination = '\r'
-
-        oxM.write('R 7')
-        oxM.wait_for_srq()
-        FieldValue = oxM.read().strip('R+').replace('+','').replace('\n','').replace('\r','')
-
-        oxM.write('R 8')
-        oxM.wait_for_srq()
-        FieldSetpValue = oxM.read().strip('R+').replace('+','').replace('\n','').replace('\r','')
-
-        oxM.write('R 9')
-        oxM.wait_for_srq()
-        SweepRateValue = oxM.read().strip('R+').replace('+','').replace('\n','').replace('\r','')
-
-        oxM.write('X')
-        oxM.wait_for_srq()
-        ExamineValue = oxM.read().strip('R+').replace('+','').replace('\n','').replace('\r','')
-        controlStateValue = controlState[ExamineValue[6]]
-        activityStateValue = activityState[ExamineValue[4]]
-        modeStateValue = modeState[ExamineValue[11]]
-
-        oxM.close()
         try:
+            oxM = rm.open_resource("GPIB0::25::INSTR")
+            oxM.read_termination = '\r'
+
+            FieldValue = oxM.query('R 7').strip('R+').replace('+','').replace('\n','').replace('\r','')
+            FieldSetpValue = oxM.query('R 8').strip('R+').replace('+','').replace('\n','').replace('\r','')
+            SweepRateValue = oxM.query('R 9').strip('R+').replace('+','').replace('\n','').replace('\r','')
+            ExamineValue = oxM.query('X').strip('R+').replace('+','').replace('\n','').replace('\r','')
+            controlStateValue = controlState[ExamineValue[6]]
+            activityStateValue = activityState[ExamineValue[4]]
+            modeStateValue = modeState[ExamineValue[11]]
+
+            oxM.close()
+        
             fvalue.set(FieldValue + ' T')
             fsetp.set(FieldSetpValue + ' T')
             sweepr.set(SweepRateValue +  ' T/min')
