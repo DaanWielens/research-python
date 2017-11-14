@@ -13,6 +13,12 @@ Program to control the _Oxford IPS 120-10 Magnet Controller_
 * Set values for setpoint and sweep rate
 * Read magnet values periodically (every 5 sec)
 
+**ITC503**
+---
+Program to control the _Oxford ITC503 Temperature Controller_
+* Read values periodically (every 5 sec)
+* Control gas flow manually
+
 **Lake**
 ---
 Program to control the _LakeShore 332 Temperature Controller_
