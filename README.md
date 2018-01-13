@@ -43,7 +43,7 @@ Options:
 ```
 This script requires numpy and matplotlib to be installed as well.
 
-Example figure (obtained with `-p -m -s "50 Hz Sine"` as options):
+Example figure (obtained with `-p -m -s "500 Hz Sine"` as options):
 ![alt ExampleFigure](https://github.com/DaanWielens/research-python/blob/master/docs/500%20Hz%20Sine.png?raw=true)
 
 *importTek*
