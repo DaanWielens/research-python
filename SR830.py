@@ -236,7 +236,7 @@ def ReadValues():
         getData = SR.query('SNAP?1,2,4,9').replace('\n','').replace('\r','')
         txtData = str(getData)
         numberX = txtData.split(',')[0]
-        numberY = txtData.split(',')[0]
+        numberY = txtData.split(',')[1]
         numberX = convertUnits(numberX)
         numberY = convertUnits(numberY)
         readX.set(numberX + 'V')
