@@ -25,6 +25,10 @@ Program to control the _LakeShore 332 Temperature Controller_
 * Read temperature values periodically (every 5 sec)
 * Control temperature with PID loop
 
+Below is a screenshot of the Lake GUI:
+
+![alt LakeScreenshot](https://github.com/DaanWielens/research-python/blob/master/docs/LakeGUI.png?raw=true)
+
 *SR830*
 ---
 Program to control the _SR830 Lock-In Amplifier_
