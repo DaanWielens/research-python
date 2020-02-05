@@ -19,6 +19,21 @@ Program to control the _Oxford ITC503 Temperature Controller_
 * Read values periodically (every 5 sec)
 * Control gas flow manually
 
+*QT IVVI DACs*
+---
+Program to control the _QuTech IVVI rack DAC module_
+* Read values of all DACs
+* Set values of a specific DAC
+* Set all DACs to zero
+
+Notes:
+* The program requires the *pySerial* module to be installed. Furthermore, the user should change the number of the COM port in line 7 of the (current version of the) code. The script assumes 16 DACs to be installed in the IVVI rack.
+* Since periodic readings could interfere with measurement scripts, the IVVI DACs controller does not have a 5 seconds refresh rate (such as the other scripts). If desirable, one can easily add this by using another GUI script as template.
+
+Below is a screenshot of the GUI:
+
+![alt IVVIScreenshot](https://github.com/DaanWielens/research-python/blob/master/docs/DacsControl.PNG?raw=true)
+
 *Lake*
 ---
 Program to control the _LakeShore 332 Temperature Controller_
