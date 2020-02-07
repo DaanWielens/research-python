@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # QT IVVI DAC controller
-# Version 1.0 (2020-02-05)
+# Version 1.1 (2020-02-07)
 # Daan Wielens (ICE/QTM)
 
 # PUT YOUR COM PORT HERE:
@@ -110,7 +110,7 @@ for i in range(16):
 # Create GUI
 top = Tkinter.Tk()
 top.lift()
-top.title('IVVI DAC controller - v1.0 (2020-02-05)')
+top.title('IVVI DAC controller - v1.1 (2020-02-07)')
 
 # Title bar
 titleFont = font.Font(family="Helvetica", size=16, weight="bold")
