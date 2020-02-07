@@ -7,6 +7,7 @@
 COMport = 1
 
 import sys
+from datetime import datetime
 
 try:
     # These modules will import succesfully for Python 2.x
@@ -38,6 +39,7 @@ if novisa == 0:
     ser.parity = serial.PARITY_ODD
     ser.stopbits = 1
     ser.bytesize = 8
+    ser.timeout = 1
     
 def write_dac(dac, val):
     val = float(val)
@@ -59,12 +61,25 @@ def write_dac(dac, val):
 
 def UpdateValues():
     if novisa == 0:
-        # Open port, request values of all DACs, close port, process data, output to text boxes
-        ser.open()
-        read_msg = bytes([4, 0, 34, 2])
-        ser.write(read_msg)
-        resp = ser.read(34)
-        ser.close()
+        # Read values, but also test connection and update the label
+        try:
+            ser.open()
+            # Open port, request values of all DACs, close port, process data, output to text boxes
+            read_msg = bytes([4, 0, 34, 2])
+            ser.write(read_msg)
+            resp = ser.read(34)
+            ser.close()
+            if len(resp) == 0:
+                raise Exception
+            now = datetime.now()
+            dt_string = now.strftime('%Y-%m-%d %H:%M:%S')
+            lblStatus.config(fg="Green")
+            statText.set('Last seen: ' + dt_string)
+        except Exception:
+            lblStatus.config(fg="Red")
+            statText.set('No COM connection')
+            return
+            
         values_int = list(range(16))
         values_Volts = list(range(16))
         for i in range(16):
@@ -88,85 +103,9 @@ def WriteDacsZero():
         write_dac(i+1, 0)
     UpdateValues()
     
-def WriteDac1():
-    val = float(d1val.get())
-    write_dac(1, val)
-    UpdateValues()
-    
-def WriteDac2():
-    val = float(d2val.get())
-    write_dac(2, val)
-    UpdateValues()
-    
-def WriteDac3():
-    val = float(d3val.get())
-    write_dac(3, val)
-    UpdateValues()
-    
-def WriteDac4():
-    val = float(d4val.get())
-    write_dac(4, val)
-    UpdateValues()
-
-def WriteDac5():
-    val = float(d5val.get())
-    write_dac(5, val)
-    UpdateValues()
-    
-def WriteDac6():
-    val = float(d6val.get())
-    write_dac(6, val)
-    UpdateValues()
-    
-def WriteDac7():
-    val = float(d7val.get())
-    write_dac(7, val)
-    UpdateValues()
-    
-def WriteDac8():
-    val = float(d8val.get())
-    write_dac(8, val)
-    UpdateValues()
-
-def WriteDac9():
-    val = float(d9val.get())
-    write_dac(9, val)
-    UpdateValues()
-    
-def WriteDac10():
-    val = float(d10val.get())
-    write_dac(10, val)
-    UpdateValues()
-    
-def WriteDac11():
-    val = float(d11val.get())
-    write_dac(11, val)
-    UpdateValues()
-    
-def WriteDac12():
-    val = float(d12val.get())
-    write_dac(12, val)
-    UpdateValues()
-
-def WriteDac13():
-    val = float(d13val.get())
-    write_dac(13, val)
-    UpdateValues()
-    
-def WriteDac14():
-    val = float(d14val.get())
-    write_dac(14, val)
-    UpdateValues()
-    
-def WriteDac15():
-    val = float(d15val.get())
-    write_dac(15, val)
-    UpdateValues()
-    
-def WriteDac16():
-    val = float(d16val.get())
-    write_dac(16, val)
-    UpdateValues()
+# Write functions for all 16 DACs in a short (but not very Pythonic) way
+for i in range(16):
+    exec("def WriteDac"+str(i+1)+"():\n val = float(d"+str(i+1)+"val.get()); write_dac("+str(i+1)+", val); UpdateValues()")
 
 # Create GUI
 top = Tkinter.Tk()
@@ -210,8 +149,14 @@ for i in range(8):
 
 # Buttons
 btnReadDACs = Tkinter.Button(top, text="Read DACs", command=UpdateValues).grid(row=10,column=0, sticky=Tkinter.W)
-btnDACszero = Tkinter.Button(top, text="DACs to zero", command=WriteDacsZero).grid(row=10, column=0, padx=75, columnspan=2000, sticky=Tkinter.W)
+btnDACszero = Tkinter.Button(top, text="DACs to zero", command=WriteDacsZero).grid(row=10, column=0, padx=75, sticky=Tkinter.W)
 
+# Status
+statFont = font.Font(family="Helvetica", size=9)
+statText = Tkinter.StringVar()
+statText.set('Connection info here')
+lblStatus = Tkinter.Label(top, textvariable=statText, font=statFont)
+lblStatus.grid(row=10, column=3, sticky=Tkinter.W)
 # Main loop(s)
 UpdateValues()
 top.mainloop()
